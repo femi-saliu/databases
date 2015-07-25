@@ -16,16 +16,17 @@ var connection = mysql.createConnection({
 
 module.exports = {
   storeMessage: function(username, text, roomname, callback){
-    var query = "INSERT INTO messages (username, message, roomname) VALUES ("+username+","+text+","+roomname+");";
+    var query = "INSERT INTO messages (username, message, roomname) VALUES (?, ?, ?);";
+    var queryVals = [username, text, roomname];
     queryDB(query, function(result){
       console.log("message storage successful ",result);
       callback(result);
-    });
+    }, queryVals);
   },
   getMessages: function(roomname, callback){
     var room = roomname || 'lobby';
     // var query = "SELECT username, message, roomname FROM messages WHERE roomname="+room+";";
-    var query = "SELECT username, message, roomname FROM messages;";
+    var query = "SELECT objectId, username, message, roomname FROM messages;";
     queryDB(query, function(result){
       console.log("message retrieval successful ",result); // eventually return result
       callback(result);
@@ -33,9 +34,9 @@ module.exports = {
   }
 };
 
-var queryDB = function(queryString, callback){
+var queryDB = function(queryString, callback, values){
   // connection.connect();
-  connection.query(queryString, function(error, result){
+  connection.query(queryString, values, function(error, result){
     if (error){throw error;}
     console.log(result);
     callback(result);
