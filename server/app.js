@@ -13,6 +13,11 @@ module.exports.app = app;
 
 // Set what we are listening on.
 app.set("port", 3000);
+app.use(function(req,res,next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // Logging and parsing
 app.use(morgan('dev'));
@@ -29,4 +34,5 @@ if (!module.parent) {
   app.listen(app.get("port"));
   console.log("Listening on", app.get("port"));
 }
+
 
